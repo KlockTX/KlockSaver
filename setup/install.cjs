@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* install.cjs — one-shot installer for the token-saver toolkit.
+/* install.cjs — one-shot installer for the klocksaver toolkit.
    Copies skill/ into the CLI skills dir and registers the PreToolUse guard hook.
    usage: node setup/install.cjs [--yes] [--dry-run] [--skills-dir DIR] [--settings FILE] [--uninstall]
    Zero dependencies. ASCII-only output (gbk-console safe). */
@@ -16,7 +16,7 @@ const HOME = os.homedir();
 const SKILLS = opt('--skills-dir') || path.join(HOME, '.qoder-cn', 'skills');
 const SETTINGS = opt('--settings') || path.join(HOME, '.qoder-cn', 'settings.json');
 const SRC = path.join(__dirname, '..', 'skill');
-const DEST = path.join(SKILLS, 'token-saver');
+const DEST = path.join(SKILLS, 'klocksaver');
 const GUARD = 'token_guard.cjs';
 
 const log = (...a) => console.log(...a);
@@ -42,15 +42,15 @@ function hookCommand() {
 }
 function alreadyRegistered(hooks) {
   const list = (hooks && hooks.PreToolUse) || [];
-  return list.some((grp) => (grp.hooks || []).some((h) => String(h.command || '').includes(GUARD) && String(h.command || '').includes('token-saver')));
+  return list.some((grp) => (grp.hooks || []).some((h) => String(h.command || '').includes(GUARD) && String(h.command || '').includes('klocksaver')));
 }
 
 if (flag('--uninstall')) {
   if (!fs.existsSync(SETTINGS)) { log('[uninstall] no settings file at', SETTINGS); process.exit(0); }
   const settings = JSON.parse(fs.readFileSync(SETTINGS, 'utf8'));
   const pre = (settings.hooks && settings.hooks.PreToolUse) || [];
-  const kept = pre.filter((grp) => !(grp.hooks || []).some((h) => String(h.command || '').includes(GUARD) && String(h.command || '').includes('token-saver')));
-  if (kept.length === pre.length) log('[uninstall] token-saver hook not registered; nothing to do');
+  const kept = pre.filter((grp) => !(grp.hooks || []).some((h) => String(h.command || '').includes(GUARD) && String(h.command || '').includes('klocksaver')));
+  if (kept.length === pre.length) log('[uninstall] klocksaver hook not registered; nothing to do');
   else {
     settings.hooks.PreToolUse = kept;
     if (!settings.hooks.PreToolUse.length) delete settings.hooks.PreToolUse;
@@ -63,7 +63,7 @@ if (flag('--uninstall')) {
   process.exit(0);
 }
 
-log('== token-saver installer ' + (DRY ? '(DRY RUN - nothing will be written)' : '') + ' ==');
+log('== klocksaver installer ' + (DRY ? '(DRY RUN - nothing will be written)' : '') + ' ==');
 log('skills dir :', SKILLS);
 log('settings   :', SETTINGS);
 
