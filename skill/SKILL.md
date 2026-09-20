@@ -1,9 +1,9 @@
 ---
-name: token-saver
+name: klocksaver
 description: Evidence-based token cost optimization for AI agent work. Use when the user wants to reduce token usage or API cost of an agent/prompt/harness, asks "为什么这么费token"、"怎么省token"、"成本优化", needs prompt caching layout advice, context compaction design, or auditing a project's token consumption (system prompts, tool definitions, tool outputs, loop rounds). Also use for writing new system prompts or tool schemas where cost matters.
 ---
 
-# Token Saver
+# KlockSaver
 
 ## Overview
 
