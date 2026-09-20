@@ -1,6 +1,6 @@
 # AGENTS.md — agent operating instructions for this repo
 
-This repository is the source of the `token-saver` toolkit. If you are an AI agent working here:
+This repository is the source of the `KlockSaver` toolkit. If you are an AI agent working here:
 
 ## Install (one-click)
 
@@ -11,7 +11,7 @@ This repository is the source of the `token-saver` toolkit. If you are an AI age
 
 ## Uninstall
 
-`node setup/install.cjs --uninstall` (backs up settings before editing; removes hook entry only if it points at token-saver).
+`node setup/install.cjs --uninstall` (backs up settings before editing; removes hook entry only if it points at KlockSaver).
 
 ## Hard rules while modifying this repo
 
