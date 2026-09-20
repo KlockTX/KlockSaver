@@ -1,5 +1,7 @@
 # token-saver
 
+> **English** | [简体中文](README.zh-CN.md)
+
 Evidence-based token cost optimization toolkit for AI agents. One command installs a skill (strategies + references), five zero-dependency Node CLIs (audit / condense / read-bound / billing / guard), and a PreToolUse hook that hard-blocks token bombs — deterministic savings, no model discretion required.
 
 ## What you get
