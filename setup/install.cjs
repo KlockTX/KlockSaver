@@ -72,12 +72,14 @@ if (!fs.existsSync(path.join(SRC, 'SKILL.md'))) { log('[FAIL] repo layout broken
 
 // step 1: copy skill
 try {
+  let moved = null;
   if (fs.existsSync(DEST)) {
-    const b = DEST + '.old-' + Date.now();
-    if (!DRY) fs.renameSync(DEST, b);
-    log('[1/3] existing install moved aside ->', path.basename(b));
+    moved = DEST + '.old-' + Date.now();
+    if (!DRY) fs.renameSync(DEST, moved);
+    log('[1/3] existing install moved aside ->', path.basename(moved));
   }
   const n = copyTree(SRC, DEST);
+  if (moved && !DRY) { fs.rmSync(moved, { recursive: true, force: true }); log('      previous copy removed (upgrade complete)'); }
   log('[1/3] installed', n, 'files ->', DEST);
 } catch (e) { log('[FAIL] copy:', e.message, '\n  retry with --skills-dir <writable path>'); process.exit(1); }
 
