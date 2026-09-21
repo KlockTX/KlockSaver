@@ -56,6 +56,7 @@ playbook 所编码策略的公开实测数据：
 
 ```bash
 node setup/install.cjs            # 安装技能 + 注册 hook
+node setup/selftest.cjs         # 全组件验收测试
 node setup/install.cjs --dry-run  # 预览，不写任何文件
 node setup/install.cjs --uninstall
 ```
