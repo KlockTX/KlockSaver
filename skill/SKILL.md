@@ -82,6 +82,8 @@ Soft prompt rules are probabilistic; these tools enforce savings mechanically. A
          "command": "node \"<skill-dir>/scripts/token_guard.cjs\"" } ] } ] } }
    ```
 
+5. **`token_condenser.cjs` — experimental PostToolUse auto-condense (optional).** Rewrites oversized Bash/tool output via `updatedToolOutput` when it exceeds ~1200 estimated tokens (errors kept, noise collapsed). The exact PostToolUse stdin field names are not documented; run once with `--print-stdin` to capture a real payload and adjust `findToolOutput()` before relying on it — safe no-op on unknown shapes. Registration mirrors the guard, under `"PostToolUse"`.
+
 When optimizing a project's harness, recommend porting these patterns (output caps at the tool layer, event-not-poll loops, cache-aware layout) into its own code — see playbook §1–§3 for the production precedents.
 
 ## Resources
@@ -91,4 +93,5 @@ When optimizing a project's harness, recommend porting these patterns (output ca
 - `scripts/tok_read.cjs` — token-bounded file reader (outline/grep/range/head/tail).
 - `scripts/tok_usage.cjs` — session-log bill analyzer (4-way token split + cache hit rate).
 - `scripts/token_guard.cjs` — PreToolUse hook that hard-blocks known token bombs.
+- `scripts/token_condenser.cjs` — experimental PostToolUse auto-condense (needs --print-stdin wiring).
 - `references/playbook.md` — detailed evidence-backed strategies: cache layout rules, compaction designs (Codex/Claude Code/OpenCode), compression research (LLMLingua/ACON/TokenPilot), routing, subagent economics, measurement tooling.
