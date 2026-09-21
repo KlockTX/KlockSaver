@@ -19,8 +19,8 @@ process.stdin.on('end', () => {
   if (/^Bash$/i.test(name)) {
     const cmd = String(input.command || '');
     const piped = /\|/.test(cmd);
-    const bigHead = (cmd.match(/\bhead\b[^\n]*?-n?\s*(\d{3,})/i) || [])[1];
-    if (!piped && (/\b(cat|less|more)\b.*\.(log|jsonl?|csv|txt|out|err)\b/i.test(cmd) || (bigHead && +bigHead >= 500)))
+    const headN = (cmd.match(/\bhead\b[^|\n]*?\s--?(?:n|lines)?[=\s]*(\d+)/i) || [])[1];
+    if (!piped && (/\b(cat|less|more)\b.*\.(log|jsonl?|csv|txt|out|err)\b/i.test(cmd) || (headN && +headN >= 500)))
       return deny(`Reading whole log/data file into context. Pipe through: | node "$HOME/.qoder-cn/skills/klocksaver/scripts/tok_reduce.cjs" or grep the error lines only.`);
     if (/\bfind\s+\/(\s|$)/.test(cmd)) return deny(`Filesystem-wide find: output floods context. Scope to the project dir or use the Glob/Grep tool.`);
     if (/\bgrep\s+-r[^|]*\s\/(\s|$)/.test(cmd)) return deny(`Recursive grep from filesystem root. Scope the path, or use the Grep tool (already capped).`);
