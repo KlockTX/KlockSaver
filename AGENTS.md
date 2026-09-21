@@ -6,7 +6,7 @@ This repository is the source of the `KlockSaver` toolkit. If you are an AI agen
 
 1. Run `node setup/install.cjs --yes` (non-interactive; prints an ASCII action report).
 2. If it fails on permissions, rerun with `--skills-dir` / `--settings` pointing to writable paths.
-3. Verify: run `node skill/scripts/token_audit.cjs skill --top 3` (expect a table of files) and confirm `settings.json` now contains a `hooks.PreToolUse` entry referencing `token_guard.cjs`.
+3. Verify: run `node setup/selftest.cjs` — expect `13 passed, 0 failed` (exercises audit/reduce/guard/read/usage/installer end to end).
 4. Tell the user hooks activate on next session start.
 
 ## Uninstall
