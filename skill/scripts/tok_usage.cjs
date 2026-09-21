@@ -5,8 +5,10 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const args = process.argv.slice(2).filter(a => !a.startsWith('--'));
-if (!args.length) { console.log('usage: node tok_usage.cjs <file.jsonl|dir> [...]'); process.exit(0); }
+const argv = process.argv.slice(2);
+const pricesOpt = (() => { const i = argv.indexOf('--prices'); return i >= 0 && argv[i + 1] ? argv[i + 1].split(',').map(Number) : null; })();
+const args = argv.filter((a, i) => !a.startsWith('--') && !(i > 0 && argv[i - 1] === '--prices'));
+if (!args.length) { console.log('usage: node tok_usage.cjs <file.jsonl|dir> [...] [--prices "in,out,cacheRead,cacheWrite per MTok USD"]'); process.exit(0); }
 
 const files = [];
 for (const a of args) {
@@ -47,6 +49,12 @@ console.log(`  output         : ${fmt(T.output)}   (priced 3-5x input)`);
 console.log(`  cache read     : ${fmt(T.cacheRead)}`);
 console.log(`  cache write    : ${fmt(T.cacheWrite)}`);
 console.log(`  total          : ${fmt(total)}`);
+if (pricesOpt && pricesOpt.length === 4 && pricesOpt.every(n => !isNaN(n))) {
+  const [pi, po, pcr, pcw] = pricesOpt;
+  const cost = (T.input * pi + T.output * po + T.cacheRead * pcr + T.cacheWrite * pcw) / 1e6;
+  const nocache = (T.input + T.cacheRead) * pi + T.output * po;
+  console.log(`  est. cost       : $${cost.toFixed(3)} (prices in/out/cR/cW per MTok) | without cache: $${nocache.toFixed(3)} | saved ${nocache > 0 ? Math.max(0, Math.round((1 - cost / nocache) * 100)) : 0}%`);
+}
 console.log(`\nCACHE HIT RATE: ${hitRate}%  → ${advice(hitRate)}`);
 console.log(`\nTOP ${Math.min(10, top.length)} requests by tokens:`);
 for (const t of top.slice(0, 10)) console.log(`  ${fmt(t.s).padStart(9)} tok  in:${fmt(t.in)} out:${fmt(t.out)} cacheR:${fmt(t.cr)}  ${t.f}`);
