@@ -30,7 +30,11 @@ const g = (cmd) => run('token_guard.cjs', [], { input: JSON.stringify({ tool_nam
 t('guard blocks cat build.log', g('cat build.log').status === 2);
 t('guard allows piped cat', g('cat build.log | tail -5').status === 0);
 t('guard allows head -50 (small)', g('head -50 notes.txt').status === 0);
-t('guard blocks head -5000 log', g('head -n 5000 big.log').status === 2);
+t('guard allows head -n 30 log', g('head -n 30 app.log').status === 0);
+t('guard blocks head -5000 log', g('head -5000 big.log').status === 2);
+t('guard blocks head -n 5000 log', g('head -n 5000 big.log').status === 2);
+t('guard blocks head --lines=99999 log', g('head --lines=99999 big.log').status === 2);
+t('guard allows filename with dash-digits', g('head notes-1234.txt').status === 0);
 t('guard blocks find root', g('find / -name x').status === 2);
 t('guard allows ls', g('ls -la').status === 0);
 
