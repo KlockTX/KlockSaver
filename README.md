@@ -57,6 +57,7 @@ Requires Node.js ≥ 18. No dependencies.
 
 ```bash
 node setup/install.cjs            # install skill + register hook
+node setup/selftest.cjs         # run acceptance tests for all components
 node setup/install.cjs --dry-run  # preview, touch nothing
 node setup/install.cjs --uninstall
 ```
