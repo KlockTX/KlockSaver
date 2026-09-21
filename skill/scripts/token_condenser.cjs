@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-/* token_condenser.cjs — PostToolUse hook: auto-condense oversized tool output (experimental).
+/* token_condenser.cjs — PostToolUse hook: auto-condense oversized tool output.
+   stdin field names CONFIRMED against production plugin code: tool_output (canonical) ?? tool_response (compat);
+   both may be string | {stdout|content|text} | content-block array — findToolOutput covers all shapes.
    Emits {"hookSpecificOutput":{"hookEventName":"PostToolUse","updatedToolOutput":"..."}} when the
-   tool result exceeds --threshold estimated tokens. Unknown stdin schema => silently allow (exit 0).
-   First-time wiring: run `node token_condenser.cjs --print-stdin > condenser-payload.sample.json`
-   registered as a PostToolUse hook, then adapt OUTPUT_KEY/INPUT paths to the real field names.
-   Register in settings AFTER PreToolUse guard, matcher "Bash". */
+   tool result exceeds --threshold estimated tokens. updatedToolOutput support is doc-claimed; verify
+   once with --print-stdin in a fresh session before depending on rewrites (safe no-op otherwise). */
 'use strict';
 const fs = require('fs');
 const argv = process.argv;
@@ -16,7 +16,7 @@ process.stdin.resume();
 let raw = '';
 process.stdin.on('data', (d) => raw += d);
 process.stdin.on('end', () => {
-  if (argv.includes('--print-stdin')) { fs.writeFileSync('condenser-payload.sample.json', raw || '{}'); console.log('[condenser] sample written'); process.exit(0); }
+  if (argv.includes('--print-stdin')) { const p = require('path').join(require('os').tmpdir(), 'klocksaver-condenser-sample.json'); require('fs').writeFileSync(p, raw || '{}'); console.log('[condenser] payload written ' + p + ' (' + raw.length + ' bytes)'); process.exit(0); }
   let j; try { j = JSON.parse(raw || '{}'); } catch { process.exit(0); }
   const out = findToolOutput(j);
   if (!out || est(out) <= THRESH) process.exit(0);
