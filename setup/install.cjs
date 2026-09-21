@@ -28,7 +28,7 @@ function backup(f) {
 }
 function copyTree(src, dest) {
   let n = 0;
-  fs.mkdirSync(dest, { recursive: true });
+  if (!DRY) fs.mkdirSync(dest, { recursive: true });
   for (const e of fs.readdirSync(src, { withFileTypes: true })) {
     const s = path.join(src, e.name), d = path.join(dest, e.name);
     if (e.isDirectory()) n += copyTree(s, d);
@@ -81,11 +81,11 @@ try {
   log('[1/3] installed', n, 'files ->', DEST);
 } catch (e) { log('[FAIL] copy:', e.message, '\n  retry with --skills-dir <writable path>'); process.exit(1); }
 
-// step 2: syntax-check installed scripts
+// step 2: syntax-check installed scripts (in dry-run, check the source tree instead)
 try {
   const { execFileSync } = require('child_process');
-  const dir = path.join(DEST, 'scripts');
-  if (!DRY) for (const f of fs.readdirSync(dir)) if (f.endsWith('.cjs')) execFileSync(process.execPath, ['--check', path.join(dir, f)], { stdio: 'pipe' });
+  const dir = DRY ? path.join(SRC, 'scripts') : path.join(DEST, 'scripts');
+  for (const f of fs.readdirSync(dir)) if (f.endsWith('.cjs')) execFileSync(process.execPath, ['--check', path.join(dir, f)], { stdio: 'pipe' });
   log('[2/3] script syntax check: OK');
 } catch (e) { log('[FAIL] syntax check:', String(e.stderr || e.message).slice(0, 200)); process.exit(1); }
 
