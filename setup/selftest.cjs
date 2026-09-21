@@ -42,6 +42,15 @@ t('guard allows ls', g('ls -la').status === 0);
 r = run('tok_read.cjs', [path.join(__dirname, '..', 'skill', 'SKILL.md'), '--outline']);
 t('read outline finds sections', r.status === 0 && /#\s|Overview/i.test(r.stdout), r.stdout.slice(0, 100));
 
+// 4b. token_condenser (PostToolUse, experimental): condenses oversized known-shape output; ignores small/unknown
+const bigOut = Array.from({ length: 300 }, (_, i) => 'noise line ' + i + ' processing').join('\n') + '\nFAILED: 2 tests broke\n';
+const cw = (obj) => run('token_condenser.cjs', [], { input: JSON.stringify(obj) });
+r = cw({ tool_name: 'Bash', tool_response: bigOut });
+let parsed = null; try { parsed = JSON.parse(r.stdout.trim()); } catch { }
+t('condenser rewrites big output via updatedToolOutput', !!(parsed && parsed.hookSpecificOutput && /updatedToolOutput/.test(r.stdout) && /FAILED: 2 tests broke/.test(parsed.hookSpecificOutput.updatedToolOutput)), r.stdout.slice(0, 120));
+t('condenser ignores small output', cw({ tool_name: 'Bash', tool_response: 'ok done' }).stdout.trim() === '');
+t('condenser ignores unknown schema', cw({ something: 'x' }).status === 0 && cw({ something: 'x' }).stdout.trim() === '');
+
 // 5. tok_usage: totals + cache rate + --prices cost line
 fs.writeFileSync(path.join(TMP, 'u.jsonl'),
   '{"usage":{"input_tokens":100,"output_tokens":50,"cache_read_input_tokens":0}}\n' +
